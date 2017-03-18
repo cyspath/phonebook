@@ -1,38 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { updateMember, deleteMember } from '../actions/index';
+import { updateRole, updateMember, deleteMember } from '../actions/index';
 import { bindActionCreators } from 'redux';
 
 class Edit extends Component {
   constructor() {
     super();
-    this.state = {
-      firstname: "",
-      lastname: "",
-      email: "",
-      phone: "",
-      checked: "regular",
-    };
   }
 
   handleFormSubmit(e) {
-      debugger
     e.preventDefault();
     const attributes = { id: this.props.member.id };
     ['firstname', 'lastname', 'email', 'phone'].forEach((a) => {
       attributes[a] = this[a].value;
     })
+    attributes.checked = this.props.member.checked;
     this.props.updateMember(attributes);
 
   }
 
   handleOptionChange(e) {
-    if (this.props.member.checked === "regular") {
-      this.props.member.checked = "admin";
-    } else {
-      this.props.member.checked = "regular";
-    }
+    this.props.updateRole(e.target.value)
   }
 
   render() {
@@ -63,7 +52,7 @@ class Edit extends Component {
           <hr/>
           <div>
             <label>
-              <input type='radio' value='regular' onChange={(e) => {this.onRadioSelected(committee.shortName, e)}} checked={this.props.member.checked === 'regular'} onChange={this.handleOptionChange.bind(this)}/>
+              <input type='radio' value='regular' checked={this.props.member.checked === 'regular'} onChange={this.handleOptionChange.bind(this)}/>
               <span> Regular - Can't delete members</span>
             </label>
             <br/>
@@ -92,7 +81,7 @@ function mapStateToProps(state) {
 }
 // whenever updateMember and deleteMember is called, the result will pass to all the reducers
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateMember, deleteMember }, dispatch);
+  return bindActionCreators({ updateRole, updateMember, deleteMember }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Edit);
